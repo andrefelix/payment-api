@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  cpf           String
+  description   String
+  amount        Int
+  paymentMethod String
+  status        String
+  preferenceId  String?
+  externalId    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model AuditPaymentRequest {
+  id          String   @id @default(uuid())
+  paymentId   String
+  cpf         String
+  amount      Int
+  method      String
+  description String
+  payload     Json
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+}
+
+model AuditWebhookEvent {
+  id          String    @id @default(uuid())
+  provider    String
+  paymentId   String?
+  externalId  String?
+  eventType   String?
+  signature   String?
+  rawBody     Json
+  receivedAt  DateTime  @default(now())
+  processed   Boolean   @default(false)
+  processedAt DateTime?
+}
+
+model AuditExternalRequest {
+  id         String   @id @default(uuid())
+  provider   String
+  paymentId  String?
+  url        String
+  method     String
+  request    Json?
+  response   Json?
+  statusCode Int?
+  durationMs Int?
+  createdAt  DateTime @default(now())
+}
+
+model AuditQueueEvent {
+  id         String   @id @default(uuid())
+  queue      String
+  jobId      String
+  paymentId  String?
+  status     String
+  error      String?
+  attempt    Int?
+  durationMs Int?
+  createdAt  DateTime @default(now())
+}
+
+model AuditPaymentStatusChange {
+  id        String   @id @default(uuid())
+  paymentId String
+  oldStatus String?
+  newStatus String
+  source    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+}

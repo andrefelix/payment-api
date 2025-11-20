@@ -1,6 +1,6 @@
 import { PrismaClient, Payment as PrismaPayment } from "@prisma/client";
 import { Payment } from "../../domain/entities/payment.entity";
-import { PaymentRepository } from "./payment.repository";
+import { PaymentRepository } from "../../domain/repositories/payment.repository";
 
 export class PaymentPrismaRepository implements PaymentRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -32,8 +32,19 @@ export class PaymentPrismaRepository implements PaymentRepository {
     return this.toDomain(record);
   }
 
-  async list(): Promise<Payment[]> {
+  async list(filters: {
+    cpf?: string;
+    method?: string;
+    status?: string;
+  }): Promise<Payment[]> {
+    const where = {
+      ...(filters.cpf ? { cpf: filters.cpf } : {}),
+      ...(filters.method ? { paymentMethod: filters.method } : {}),
+      ...(filters.status ? { status: filters.status } : {}),
+    };
+
     const records = await this.prisma.payment.findMany({
+      where,
       orderBy: { createdAt: "desc" },
     });
 

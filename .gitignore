@@ -15,9 +15,6 @@ dist/
 .env
 .env.*.local
 
-# Prisma
-prisma/migrations/
-
 coverage
 logs
 *.log

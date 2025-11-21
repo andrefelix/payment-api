@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: payment_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: paymentdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - payment-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: payment_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - payment-network
+
+  prisma-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment_prisma_migrate
+    depends_on:
+      - postgres
+    command: ["sh", "-c", "/app/wait-for-it.sh postgres 5432 npx prisma migrate deploy"]
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/paymentdb?schema=public"
+    networks:
+      - payment-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment_api
+    depends_on:
+      - postgres
+      - redis
+      - prisma-migrate
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/paymentdb?schema=public"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      NODE_ENV: production
+      PORT: 3000
+      MERCADOPAGO_ACCESS_TOKEN: "SUA_KEY"
+      MERCADOPAGO_WEBHOOK_SECRET: "SUA_SECRET"
+    ports:
+      - "3000:3000"
+    networks:
+      - payment-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payment_worker
+    depends_on:
+      - postgres
+      - redis
+      - api
+      - prisma-migrate
+    command: ["npm", "run", "start:worker"]
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/paymentdb?schema=public"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      NODE_ENV: production
+    networks:
+      - payment-network
+
+networks:
+  payment-network:
+
+volumes:
+  postgres_data:

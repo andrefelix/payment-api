@@ -1,20 +1,16 @@
 import { Processor, WorkerHost, OnWorkerEvent } from "@nestjs/bullmq";
-import { UpdatePaymentUseCase } from "../../application/use-cases/update-payment.usecase";
-import { PAYMENT_CALLBACK_QUEUE } from "./payment.queue";
-import { WorkerLogger } from "../../../../shared/infra/logger/logger.worker";
 import { Job } from "bullmq";
-
-type PaymentCallbackJob = {
-  paymentId: string;
-  status: string;
-  externalId?: string;
-  preferenceId?: string;
-};
+import { ProcessCreditCardPaymentUseCase } from "../../application/use-cases/process-credit-card-payment.usecase";
+import {
+  PAYMENT_CALLBACK_QUEUE,
+  PaymentCallbackJob,
+} from "./payment.queue";
+import { WorkerLogger } from "../../../../shared/infra/logger/logger.worker";
 
 @Processor(PAYMENT_CALLBACK_QUEUE)
 export class PaymentProcessor extends WorkerHost {
   constructor(
-    private readonly updatePaymentUseCase: UpdatePaymentUseCase,
+    private readonly processCreditCardPaymentUseCase: ProcessCreditCardPaymentUseCase,
     private readonly workerLogger: WorkerLogger
   ) {
     super();
@@ -33,11 +29,13 @@ export class PaymentProcessor extends WorkerHost {
 
     try {
       const { paymentId, status, externalId, preferenceId } = data;
-      const result = await this.updatePaymentUseCase.execute(paymentId, {
-        status,
-        externalId,
-        preferenceId,
-      });
+      const result =
+        await this.processCreditCardPaymentUseCase.execute({
+          paymentId,
+          status,
+          externalId,
+          preferenceId,
+        });
 
       this.workerLogger.completed(jobInfo, result);
     } catch (err) {

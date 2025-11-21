@@ -4,7 +4,7 @@ import { Queue } from "bullmq";
 
 export const PAYMENT_CALLBACK_QUEUE = "payment-callback";
 
-type PaymentCallbackJob = {
+export type PaymentCallbackJob = {
   paymentId: string;
   status: string;
   externalId?: string;

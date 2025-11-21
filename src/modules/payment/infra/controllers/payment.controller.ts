@@ -14,11 +14,14 @@ import { CreatePaymentUseCase } from "../../application/use-cases/create-payment
 import { UpdatePaymentUseCase } from "../../application/use-cases/update-payment.usecase";
 import { GetPaymentUseCase } from "../../application/use-cases/get-payment.usecase";
 import { ListPaymentsUseCase } from "../../application/use-cases/list-payments.use-case";
-import { ProcessCreditCardPaymentUseCase } from "../../application/use-cases/process-credit-card-payment.usecase";
 import { MercadoPagoService } from "../mercado-pago/mercadopago.service";
 import { CreatePaymentDto } from "../../application/dto/create-payment.dto";
 import { UpdatePaymentDto } from "../../application/dto/update-payment.dto";
 import { ListPaymentsDto } from "../../application/dto/list-payments.dto";
+import {
+  PaymentQueue,
+  PaymentCallbackJob,
+} from "../queue/payment.queue";
 
 @Controller("payment")
 export class PaymentController {
@@ -27,8 +30,8 @@ export class PaymentController {
     private readonly updatePaymentUseCase: UpdatePaymentUseCase,
     private readonly getPaymentUseCase: GetPaymentUseCase,
     private readonly listPaymentsUseCase: ListPaymentsUseCase,
-    private readonly processCreditCardPaymentUseCase: ProcessCreditCardPaymentUseCase,
-    private readonly mercadoPagoService: MercadoPagoService
+    private readonly mercadoPagoService: MercadoPagoService,
+    private readonly paymentQueue: PaymentQueue
   ) {}
 
   @Post()
@@ -77,12 +80,14 @@ export class PaymentController {
     const externalId = body.externalId ?? body.data?.external_id;
     const preferenceId = body.preferenceId ?? body.data?.preference_id;
 
-    await this.processCreditCardPaymentUseCase.execute({
+    const job: PaymentCallbackJob = {
       paymentId,
       status,
       externalId,
       preferenceId,
-    });
+    };
+
+    await this.paymentQueue.enqueueCallback(job);
 
     return { received: true };
   }

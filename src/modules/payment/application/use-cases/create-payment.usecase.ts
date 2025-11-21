@@ -1,28 +1,27 @@
-import { Inject } from "@nestjs/common";
-import { Payment } from "../../domain/entities/payment.entity";
-import {
-  PAYMENT_REPOSITORY,
-  PaymentRepository,
-} from "../../domain/repositories/payment.repository";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { CreatePaymentDto } from "../dto/create-payment.dto";
+import { CreatePixPaymentUseCase } from "./create-pix-payment.usecase";
+import { CreateCreditCardPaymentUseCase } from "./create-credit-card-payment.usecase";
 
+@Injectable()
 export class CreatePaymentUseCase {
   constructor(
-    @Inject(PAYMENT_REPOSITORY) private readonly repository: PaymentRepository
+    private readonly createPixPayment: CreatePixPaymentUseCase,
+    private readonly createCreditCardPayment: CreateCreditCardPaymentUseCase
   ) {}
 
-  async execute(input: CreatePaymentDto): Promise<Payment> {
-    const defaultStatus = "pending";
-    const payment = Payment.create({
-      cpf: input.cpf,
-      description: input.description,
-      amount: input.amount,
-      paymentMethod: input.paymentMethod,
-      status: input.status ?? defaultStatus,
-      preferenceId: input.preferenceId,
-      externalId: input.externalId,
-    });
+  async execute(input: CreatePaymentDto) {
+    switch (input.paymentMethod) {
+      case "PIX":
+        return this.createPixPayment.execute(input);
 
-    return this.repository.create(payment);
+      case "CREDIT_CARD":
+        return this.createCreditCardPayment.execute(input);
+
+      default:
+        throw new BadRequestException(
+          `Unsupported payment method: ${input.paymentMethod}`
+        );
+    }
   }
 }

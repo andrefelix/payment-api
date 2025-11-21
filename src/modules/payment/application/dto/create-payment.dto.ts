@@ -26,19 +26,6 @@ export class CreatePaymentDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsIn(["credit_card", "debit_card", "pix", "boleto"])
+  @IsIn(["CREDIT_CARD", "PIX"])
   paymentMethod!: string;
-
-  @IsString()
-  @IsOptional()
-  @IsIn(["pending", "processing", "paid", "failed", "canceled", "refunded"])
-  status?: string;
-
-  @IsString()
-  @IsOptional()
-  preferenceId?: string;
-
-  @IsString()
-  @IsOptional()
-  externalId?: string;
 }

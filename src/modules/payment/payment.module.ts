@@ -17,6 +17,8 @@ import { PaymentController } from "./infra/controllers/payment.controller";
 import { GetPaymentUseCase } from "./application/use-cases/get-payment.usecase";
 import { ProcessCreditCardPaymentUseCase } from "./application/use-cases/process-credit-card-payment.usecase";
 import { PrismaModule } from "../../shared/infra/database/prisma.module";
+import { CreatePixPaymentUseCase } from "./application/use-cases/create-pix-payment.usecase";
+import { CreateCreditCardPaymentUseCase } from "./application/use-cases/create-credit-card-payment.usecase";
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { PrismaModule } from "../../shared/infra/database/prisma.module";
     MercadoPagoService,
     PaymentQueue,
     PaymentProcessor,
+    CreatePixPaymentUseCase,
+    CreateCreditCardPaymentUseCase,
     {
       provide: PAYMENT_REPOSITORY,
       useClass: PaymentPrismaRepository,

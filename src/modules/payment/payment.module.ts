@@ -13,6 +13,9 @@ import {
 } from "./infra/queue/payment.queue";
 import { PaymentProcessor } from "./infra/queue/payment.processor";
 import { WorkerLogger } from "../../shared/infra/logger/logger.worker";
+import { PaymentController } from "./infra/controllers/payment.controller";
+import { GetPaymentUseCase } from "./application/use-cases/get-payment.usecase";
+import { ProcessCreditCardPaymentUseCase } from "./application/use-cases/process-credit-card-payment.usecase";
 
 @Module({
   imports: [
@@ -21,12 +24,14 @@ import { WorkerLogger } from "../../shared/infra/logger/logger.worker";
     //   name: PAYMENT_CALLBACK_QUEUE,
     // }),
   ],
-  controllers: [],
+  controllers: [PaymentController],
   providers: [
     WorkerLogger,
+    GetPaymentUseCase,
     CreatePaymentUseCase,
     UpdatePaymentUseCase,
     ListPaymentsUseCase,
+    ProcessCreditCardPaymentUseCase,
     MercadoPagoService,
     // PaymentQueue,
     // PaymentProcessor,

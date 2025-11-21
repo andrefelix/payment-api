@@ -13,7 +13,7 @@ const createPaymentMock = (overrides?: Partial<Record<string, any>>) => ({
   description: "Test payment",
   amount: { value: 1500 },
   paymentMethod: { value: "pix" },
-  status: { value: "pending" },
+  status: { value: "PENDING" },
   preferenceId: "pref-1",
   externalId: "ext-1",
   createdAt: new Date("2024-01-01T00:00:00.000Z"),
@@ -25,7 +25,7 @@ describe("ListPaymentsUseCase", () => {
   it("returns filtered payments list", async () => {
     const repository = createRepositoryMock();
     const useCase = new ListPaymentsUseCase(repository as any);
-    const filters = { cpf: "52998224725", method: "pix", status: "pending" };
+    const filters = { cpf: "52998224725", method: "pix", status: "PENDING" };
     const payments = [
       createPaymentMock(),
       createPaymentMock({ id: "payment-2" }),

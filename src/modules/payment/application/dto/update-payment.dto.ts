@@ -6,6 +6,7 @@ import {
   IsIn,
   Matches,
 } from "class-validator";
+import { AllowedPaymentStatus } from "../../domain/allowed-payment-status";
 
 export class UpdatePaymentDto {
   @IsString()
@@ -31,7 +32,11 @@ export class UpdatePaymentDto {
 
   @IsString()
   @IsOptional()
-  @IsIn(["pending", "processing", "paid", "failed", "canceled", "refunded"])
+  @IsIn([
+    AllowedPaymentStatus.PENDING,
+    AllowedPaymentStatus.PAID,
+    AllowedPaymentStatus.FAIL,
+  ])
   status?: string;
 
   @IsString()

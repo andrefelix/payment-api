@@ -48,7 +48,7 @@ describe("CreatePixPaymentUseCase", () => {
     expect(payload.cpf.value).toBe(input.cpf);
     expect(payload.description).toBe(input.description);
     expect(payload.amount.value).toBe(input.amount);
-    expect(payload.status.value).toBe("pending");
+    expect(payload.status.value).toBe("PENDING");
     expect(result).toEqual(created);
   });
 

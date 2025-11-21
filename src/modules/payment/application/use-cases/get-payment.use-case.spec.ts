@@ -13,7 +13,7 @@ const createPaymentMock = () => ({
   description: "Test payment",
   amount: { value: 1500 },
   paymentMethod: { value: "pix" },
-  status: { value: "pending" },
+  status: { value: "PENING" },
   preferenceId: "pref-1",
   externalId: "ext-1",
   createdAt: new Date("2024-01-01T00:00:00.000Z"),

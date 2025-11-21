@@ -13,7 +13,7 @@ const createPaymentMock = (overrides?: Partial<Record<string, any>>) => ({
   description: "Test payment",
   amount: { value: 500 },
   paymentMethod: { value: "pix" },
-  status: { value: "pending" },
+  status: { value: "PENDING" },
   preferenceId: "pref-1",
   externalId: "ext-1",
   createdAt: new Date("2024-01-01T00:00:00.000Z"),
@@ -34,7 +34,7 @@ describe("UpdatePaymentUseCase - Status", () => {
     repository.findById.mockResolvedValue(existingPayment);
 
     const updatedPayment = createPaymentMock({
-      status: { value: "paid" },
+      status: { value: "PAID" },
       updatedAt: new Date("2024-01-02T00:00:00.000Z"),
     });
 
@@ -43,7 +43,7 @@ describe("UpdatePaymentUseCase - Status", () => {
     const useCase = new UpdatePaymentUseCase(repository as any);
 
     const result = await useCase.execute(existingPayment.id, {
-      status: "paid",
+      status: "PAID",
     });
 
     expect(result).toEqual(updatedPayment);
@@ -52,7 +52,7 @@ describe("UpdatePaymentUseCase - Status", () => {
 
     const payload = (repository.update as jest.Mock).mock.calls[0][0];
 
-    expect(payload.status.value).toBe("paid");
+    expect(payload.status.value).toBe("PAID");
     expect(payload.createdAt.getTime()).toBe(
       existingPayment.createdAt.getTime()
     );
@@ -83,7 +83,7 @@ describe("UpdatePaymentUseCase - Status", () => {
     const useCase = new UpdatePaymentUseCase(repository as any);
 
     await expect(
-      useCase.execute("missing-payment-id", { status: "paid" })
+      useCase.execute("missing-payment-id", { status: "PAID" })
     ).rejects.toThrow("Payment not found");
 
     expect(repository.update).not.toHaveBeenCalled();

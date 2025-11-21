@@ -1,22 +1,21 @@
+import { AllowedPaymentStatus } from "../allowed-payment-status";
+
 export class PaymentStatus {
   private constructor(private readonly raw: string) {
     Object.freeze(this);
   }
 
   static create(value: string): PaymentStatus {
-    const normalized = value ? value.trim().toLowerCase() : "";
+    const normalized = value ? value.trim() : "";
 
     if (!normalized) {
       throw new Error("Payment status is required");
     }
 
-    const allowed = [
-      "pending",
-      "processing",
-      "paid",
-      "failed",
-      "canceled",
-      "refunded",
+    const allowed: string[] = [
+      AllowedPaymentStatus.PENDING,
+      AllowedPaymentStatus.PAID,
+      AllowedPaymentStatus.FAIL,
     ];
 
     if (!allowed.includes(normalized)) {

@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, NotFoundException } from "@nestjs/common";
 import { Payment } from "../../domain/entities/payment.entity";
 import {
   PAYMENT_REPOSITORY,
@@ -22,7 +22,7 @@ export class ProcessCreditCardPaymentUseCase {
     const payment = await this.repository.findByExternalId(input.paymentId);
 
     if (!payment) {
-      throw new Error("Payment not found");
+      throw new NotFoundException("Payment not found");
     }
 
     if (payment.paymentMethod.value !== AllowedPaymentMethods.CREDIT_CARD) {

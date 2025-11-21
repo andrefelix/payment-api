@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, NotFoundException } from "@nestjs/common";
 import { Payment } from "../../domain/entities/payment.entity";
 import {
   PAYMENT_REPOSITORY,
@@ -14,7 +14,7 @@ export class GetPaymentUseCase {
     const payment = await this.repository.findById(id);
 
     if (!payment) {
-      throw new Error("Payment not found");
+      throw new NotFoundException("Payment not found");
     }
 
     return payment;

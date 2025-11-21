@@ -16,13 +16,21 @@ import { WorkerLogger } from "../../shared/infra/logger/logger.worker";
 import { PaymentController } from "./infra/controllers/payment.controller";
 import { GetPaymentUseCase } from "./application/use-cases/get-payment.usecase";
 import { ProcessCreditCardPaymentUseCase } from "./application/use-cases/process-credit-card-payment.usecase";
+import { PrismaModule } from "../../shared/infra/database/prisma.module";
 
 @Module({
   imports: [
+    PrismaModule,
     LoggerModule,
-    // BullModule.registerQueue({
-    //   name: PAYMENT_CALLBACK_QUEUE,
-    // }),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT ?? 6379),
+      },
+    }),
+    BullModule.registerQueue({
+      name: PAYMENT_CALLBACK_QUEUE,
+    }),
   ],
   controllers: [PaymentController],
   providers: [
@@ -33,8 +41,8 @@ import { ProcessCreditCardPaymentUseCase } from "./application/use-cases/process
     ListPaymentsUseCase,
     ProcessCreditCardPaymentUseCase,
     MercadoPagoService,
-    // PaymentQueue,
-    // PaymentProcessor,
+    PaymentQueue,
+    PaymentProcessor,
     {
       provide: PAYMENT_REPOSITORY,
       useClass: PaymentPrismaRepository,

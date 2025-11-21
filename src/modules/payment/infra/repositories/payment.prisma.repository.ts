@@ -1,9 +1,12 @@
-import { PrismaClient, Payment as PrismaPayment } from "@prisma/client";
+import { Injectable } from "@nestjs/common";
+import { Payment as PrismaPayment } from "@prisma/client";
 import { Payment } from "../../domain/entities/payment.entity";
 import { PaymentRepository } from "../../domain/repositories/payment.repository";
+import { PrismaService } from "../../../../shared/infra/database/prisma.service";
 
+@Injectable()
 export class PaymentPrismaRepository implements PaymentRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(payment: Payment): Promise<Payment> {
     const data = this.toPersistence(payment);

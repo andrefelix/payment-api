@@ -1,75 +1,83 @@
+import { BadRequestException } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
 import { CreatePaymentUseCase } from "./create-payment.usecase";
-
-const createRepositoryMock = () => ({
-  create: jest.fn(),
-  update: jest.fn(),
-  findById: jest.fn(),
-  list: jest.fn(),
-});
-
-const createPaymentMock = () => ({
-  id: "payment-id",
-  cpf: { value: "52998224725" },
-  description: "Test payment",
-  amount: { value: 1500 },
-  paymentMethod: { value: "pix" },
-  status: { value: "pending" },
-  preferenceId: "pref-1",
-  externalId: "ext-1",
-  createdAt: new Date("2024-01-01T00:00:00.000Z"),
-  updatedAt: new Date("2024-01-01T00:00:00.000Z"),
-});
+import { CreatePixPaymentUseCase } from "./create-pix-payment.usecase";
+import { CreateCreditCardPaymentUseCase } from "./create-credit-card-payment.usecase";
 
 describe("CreatePaymentUseCase", () => {
-  const validInput = {
-    cpf: "52998224725",
-    description: "Test payment",
-    amount: 1500,
-    paymentMethod: "pix",
-    preferenceId: "pref-1",
-    externalId: "ext-1",
-  };
+  const pixMock = { execute: jest.fn() };
+  const creditCardMock = { execute: jest.fn() };
 
-  it("creates a valid payment", async () => {
-    const repository = createRepositoryMock();
-    const useCase = new CreatePaymentUseCase(repository as any);
-    const payment = createPaymentMock();
+  const buildModule = () =>
+    Test.createTestingModule({
+      providers: [
+        CreatePaymentUseCase,
+        { provide: CreatePixPaymentUseCase, useValue: pixMock },
+        { provide: CreateCreditCardPaymentUseCase, useValue: creditCardMock },
+      ],
+    }).compile();
 
-    repository.create.mockResolvedValue(payment);
-
-    const result = await useCase.execute(validInput);
-
-    expect(result).toEqual(payment);
-    expect(repository.create).toHaveBeenCalledTimes(1);
-
-    const createdPayment = (repository.create as jest.Mock).mock.calls[0][0];
-
-    expect(createdPayment.cpf.value).toBe(validInput.cpf);
-    expect(createdPayment.description).toBe(validInput.description);
-    expect(createdPayment.amount.value).toBe(validInput.amount);
-    expect(createdPayment.paymentMethod.value).toBe(validInput.paymentMethod);
-    expect(createdPayment.status.value).toBe("pending");
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("throws when amount is invalid", async () => {
-    const repository = createRepositoryMock();
-    const useCase = new CreatePaymentUseCase(repository as any);
+  it('deve chamar createPixPayment.execute quando paymentMethod = "PIX"', async () => {
+    const moduleRef = await buildModule();
+    const useCase = moduleRef.get<CreatePaymentUseCase>(CreatePaymentUseCase);
+    const input = {
+      cpf: "52998224725",
+      description: "Pix payment",
+      amount: 100,
+      paymentMethod: "PIX",
+      preferenceId: "pref-1",
+      externalId: "ext-1",
+    };
 
-    await expect(useCase.execute({ ...validInput, amount: 0 })).rejects.toThrow(
-      "Invalid amount"
+    pixMock.execute.mockResolvedValue({ id: "pix-payment" });
+
+    const result = await useCase.execute(input);
+
+    expect(pixMock.execute).toHaveBeenCalledWith(input);
+    expect(creditCardMock.execute).not.toHaveBeenCalled();
+    expect(result).toEqual({ id: "pix-payment" });
+  });
+
+  it('deve chamar createCreditCardPayment.execute quando paymentMethod = "CREDIT_CARD"', async () => {
+    const moduleRef = await buildModule();
+    const useCase = moduleRef.get<CreatePaymentUseCase>(CreatePaymentUseCase);
+    const input = {
+      cpf: "52998224725",
+      description: "Credit card payment",
+      amount: 200,
+      paymentMethod: "CREDIT_CARD",
+      preferenceId: "pref-2",
+      externalId: "ext-2",
+    };
+
+    creditCardMock.execute.mockResolvedValue({ id: "cc-payment" });
+
+    const result = await useCase.execute(input);
+
+    expect(creditCardMock.execute).toHaveBeenCalledWith(input);
+    expect(pixMock.execute).not.toHaveBeenCalled();
+    expect(result).toEqual({ id: "cc-payment" });
+  });
+
+  it("deve lançar BadRequestException quando o método for inválido", async () => {
+    const moduleRef = await buildModule();
+    const useCase = moduleRef.get<CreatePaymentUseCase>(CreatePaymentUseCase);
+    const input = {
+      cpf: "52998224725",
+      description: "Invalid payment",
+      amount: 300,
+      paymentMethod: "BOLETO",
+    } as any;
+
+    await expect(useCase.execute(input)).rejects.toBeInstanceOf(
+      BadRequestException
     );
 
-    expect(repository.create).not.toHaveBeenCalled();
-  });
-
-  it("throws when cpf is invalid", async () => {
-    const repository = createRepositoryMock();
-    const useCase = new CreatePaymentUseCase(repository as any);
-
-    await expect(
-      useCase.execute({ ...validInput, cpf: "123" })
-    ).rejects.toThrow("Invalid CPF");
-
-    expect(repository.create).not.toHaveBeenCalled();
+    expect(pixMock.execute).not.toHaveBeenCalled();
+    expect(creditCardMock.execute).not.toHaveBeenCalled();
   });
 });

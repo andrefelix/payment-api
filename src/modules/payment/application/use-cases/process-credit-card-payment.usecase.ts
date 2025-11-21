@@ -18,13 +18,13 @@ export class ProcessCreditCardPaymentUseCase {
   ) {}
 
   async execute(input: ProcessCreditCardPaymentInput): Promise<Payment> {
-    const payment = await this.repository.findById(input.paymentId);
+    const payment = await this.repository.findByExternalId(input.paymentId);
 
     if (!payment) {
       throw new Error("Payment not found");
     }
 
-    if (payment.paymentMethod.value !== "credit_card") {
+    if (payment.paymentMethod.value !== "CREDIT_CARD") {
       throw new Error("Payment method is not credit_card");
     }
 
@@ -34,7 +34,7 @@ export class ProcessCreditCardPaymentUseCase {
       description: payment.description,
       amount: payment.amount.value,
       paymentMethod: payment.paymentMethod.value,
-      status: input.status ?? "processing",
+      status: input.status ?? payment.status.value,
       preferenceId: input.preferenceId ?? payment.preferenceId,
       externalId: input.externalId ?? payment.externalId,
       createdAt: payment.createdAt,

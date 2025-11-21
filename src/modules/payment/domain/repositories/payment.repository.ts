@@ -6,6 +6,7 @@ export interface PaymentRepository {
   create(payment: Payment): Promise<Payment>;
   update(payment: Payment): Promise<Payment>;
   findById(id: string): Promise<Payment | null>;
+  findByExternalId(externalId: string): Promise<Payment | null>;
   list(filters: {
     cpf?: string;
     method?: string;

@@ -35,6 +35,18 @@ export class PaymentPrismaRepository implements PaymentRepository {
     return this.toDomain(record);
   }
 
+  async findByExternalId(externalId: string): Promise<Payment | null> {
+    const record = await this.prisma.payment.findFirst({
+      where: { externalId },
+    });
+
+    if (!record) {
+      return null;
+    }
+
+    return this.toDomain(record);
+  }
+
   async list(filters: {
     cpf?: string;
     method?: string;

@@ -123,8 +123,8 @@ src/
 {
   "id": "123",
   "paymentId": "pay_abc",
-  "status": "paid",
-  "data": { "id": "pay_abc", "status": "paid", "external_id": "ext_1", "preference_id": "pref_1" }
+  "status": "PAID",
+  "data": { "id": "pay_abc", "status": "PAID", "external_id": "ext_1", "preference_id": "pref_1" }
 }
 ```
 - Fluxo: callback → fila `payment-callback` → worker processa → pagamento atualizado no banco.

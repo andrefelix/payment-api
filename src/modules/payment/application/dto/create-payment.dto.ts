@@ -11,7 +11,9 @@ import {
 export class CreatePaymentDto {
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\d{11}$/)
+  @Matches(/^\d{11,14}$/, {
+    message: "cpf must contain 11 or 14 digits",
+  })
   cpf!: string;
 
   @IsString()

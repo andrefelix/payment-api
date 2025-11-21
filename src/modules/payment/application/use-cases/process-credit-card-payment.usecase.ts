@@ -1,5 +1,9 @@
+import { Inject } from "@nestjs/common";
 import { Payment } from "../../domain/entities/payment.entity";
-import { PaymentRepository } from "../../domain/repositories/payment.repository";
+import {
+  PAYMENT_REPOSITORY,
+  PaymentRepository,
+} from "../../domain/repositories/payment.repository";
 
 type ProcessCreditCardPaymentInput = {
   paymentId: string;
@@ -9,7 +13,9 @@ type ProcessCreditCardPaymentInput = {
 };
 
 export class ProcessCreditCardPaymentUseCase {
-  constructor(private readonly repository: PaymentRepository) {}
+  constructor(
+    @Inject(PAYMENT_REPOSITORY) private readonly repository: PaymentRepository
+  ) {}
 
   async execute(input: ProcessCreditCardPaymentInput): Promise<Payment> {
     const payment = await this.repository.findById(input.paymentId);

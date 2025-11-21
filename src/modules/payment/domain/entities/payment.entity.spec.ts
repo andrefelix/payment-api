@@ -6,7 +6,7 @@ describe("Payment", () => {
       cpf: "52998224725",
       description: "Test payment",
       amount: 1500,
-      paymentMethod: "pix",
+      paymentMethod: "PIX",
       status: "PENDING",
     });
 
@@ -14,7 +14,7 @@ describe("Payment", () => {
     expect(payment.cpf.value).toBe("52998224725");
     expect(payment.description).toBe("Test payment");
     expect(payment.amount.value).toBe(1500);
-    expect(payment.paymentMethod.value).toBe("pix");
+    expect(payment.paymentMethod.value).toBe("PIX");
     expect(payment.status.value).toBe("PENDING");
     expect(payment.createdAt).toBeInstanceOf(Date);
     expect(payment.updatedAt).toBeInstanceOf(Date);
@@ -26,7 +26,7 @@ describe("Payment", () => {
         cpf: "52998224725",
         description: "",
         amount: 100,
-        paymentMethod: "pix",
+        paymentMethod: "PIX",
         status: "PENDING",
       })
     ).toThrow("Description is required");
@@ -36,7 +36,7 @@ describe("Payment", () => {
         cpf: "invalid",
         description: "Test",
         amount: 100,
-        paymentMethod: "pix",
+        paymentMethod: "PIX",
         status: "PENDING",
       })
     ).toThrow("Invalid CPF");
@@ -47,7 +47,7 @@ describe("Payment", () => {
       cpf: "52998224725",
       description: "Test payment",
       amount: 200,
-      paymentMethod: "pix",
+      paymentMethod: "PIX",
       status: "PENDING",
     });
 
@@ -67,7 +67,7 @@ describe("Payment", () => {
       cpf: "52998224725",
       description: "Test payment",
       amount: 300,
-      paymentMethod: "pix",
+      paymentMethod: "PIX",
       status: "PENDING",
       createdAt,
     });
@@ -101,7 +101,7 @@ describe("Payment", () => {
       cpf: "52998224725",
       description: "Test payment",
       amount: 300,
-      paymentMethod: "pix",
+      paymentMethod: "PIX",
       status: "PENDING",
       createdAt,
     });
@@ -128,7 +128,7 @@ describe("Payment", () => {
       cpf: "52998224725",
       description: "Test payment",
       amount: 300,
-      paymentMethod: "pix",
+      paymentMethod: "PIX",
       status: "PENDING",
       createdAt,
     });

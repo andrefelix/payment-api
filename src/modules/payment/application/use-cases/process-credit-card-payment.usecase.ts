@@ -4,6 +4,7 @@ import {
   PAYMENT_REPOSITORY,
   PaymentRepository,
 } from "../../domain/repositories/payment.repository";
+import { AllowedPaymentMethods } from "../../domain/allowed-payment-methods";
 
 type ProcessCreditCardPaymentInput = {
   paymentId: string;
@@ -24,7 +25,7 @@ export class ProcessCreditCardPaymentUseCase {
       throw new Error("Payment not found");
     }
 
-    if (payment.paymentMethod.value !== "CREDIT_CARD") {
+    if (payment.paymentMethod.value !== AllowedPaymentMethods.CREDIT_CARD) {
       throw new Error("Payment method is not credit_card");
     }
 

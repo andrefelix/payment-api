@@ -69,7 +69,7 @@ describe("CreateCreditCardPaymentUseCase", () => {
 
     expect(repository.create).toHaveBeenCalledTimes(1);
     const payloadCreate = repository.create.mock.calls[0][0];
-    expect(payloadCreate.paymentMethod.value).toBe("credit_card");
+    expect(payloadCreate.paymentMethod.value).toBe("CREDIT_CARD");
     expect(mercadoPago.createPreference).toHaveBeenCalledTimes(1);
     expect(mercadoPago.createPreference).toHaveBeenCalledWith({
       externalReference: created.id,

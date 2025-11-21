@@ -6,6 +6,7 @@ import {
 } from "../../domain/repositories/payment.repository";
 import { CreatePaymentDto } from "../dto/create-payment.dto";
 import { MercadoPagoService } from "../../infra/mercado-pago/mercadopago.service";
+import { AllowedPaymentStatus } from "../../domain/allowed-payment-status";
 
 export class CreateCreditCardPaymentUseCase {
   constructor(
@@ -19,7 +20,7 @@ export class CreateCreditCardPaymentUseCase {
       description: input.description,
       amount: input.amount,
       paymentMethod: input.paymentMethod,
-      status: "PENDING",
+      status: AllowedPaymentStatus.PENDING,
     });
 
     const created = await this.repository.create(payment);

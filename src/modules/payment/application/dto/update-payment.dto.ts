@@ -7,6 +7,7 @@ import {
   Matches,
 } from "class-validator";
 import { AllowedPaymentStatus } from "../../domain/allowed-payment-status";
+import { AllowedPaymentMethods } from "../../domain/allowed-payment-methods";
 
 export class UpdatePaymentDto {
   @IsString()
@@ -27,7 +28,7 @@ export class UpdatePaymentDto {
 
   @IsString()
   @IsOptional()
-  @IsIn(["credit_card", "debit_card", "pix", "boleto"])
+  @IsIn([AllowedPaymentMethods.PIX, AllowedPaymentMethods.CREDIT_CARD])
   paymentMethod?: string;
 
   @IsString()

@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from "@nestjs/common";
 import { CreatePaymentDto } from "../dto/create-payment.dto";
 import { CreatePixPaymentUseCase } from "./create-pix-payment.usecase";
 import { CreateCreditCardPaymentUseCase } from "./create-credit-card-payment.usecase";
+import { AllowedPaymentMethods } from "../../domain/allowed-payment-methods";
 
 @Injectable()
 export class CreatePaymentUseCase {
@@ -12,10 +13,10 @@ export class CreatePaymentUseCase {
 
   async execute(input: CreatePaymentDto) {
     switch (input.paymentMethod) {
-      case "PIX":
+      case AllowedPaymentMethods.PIX:
         return this.createPixPayment.execute(input);
 
-      case "CREDIT_CARD":
+      case AllowedPaymentMethods.CREDIT_CARD:
         return this.createCreditCardPayment.execute(input);
 
       default:

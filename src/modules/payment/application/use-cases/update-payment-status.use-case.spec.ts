@@ -12,7 +12,7 @@ const createPaymentMock = (overrides?: Partial<Record<string, any>>) => ({
   cpf: { value: "52998224725" },
   description: "Test payment",
   amount: { value: 500 },
-  paymentMethod: { value: "pix" },
+  paymentMethod: { value: "PIX" },
   status: { value: "PENDING" },
   preferenceId: "pref-1",
   externalId: "ext-1",

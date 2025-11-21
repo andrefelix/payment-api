@@ -7,6 +7,7 @@ import {
   IsIn,
   Matches,
 } from "class-validator";
+import { AllowedPaymentMethods } from "../../domain/allowed-payment-methods";
 
 export class CreatePaymentDto {
   @IsString()
@@ -26,6 +27,6 @@ export class CreatePaymentDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsIn(["CREDIT_CARD", "PIX"])
+  @IsIn([AllowedPaymentMethods.PIX, AllowedPaymentMethods.CREDIT_CARD])
   paymentMethod!: string;
 }

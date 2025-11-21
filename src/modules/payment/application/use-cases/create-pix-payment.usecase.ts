@@ -5,6 +5,7 @@ import {
 } from "../../domain/repositories/payment.repository";
 import { CreatePaymentDto } from "../dto/create-payment.dto";
 import { Payment } from "../../domain/entities/payment.entity";
+import { AllowedPaymentStatus } from "../../domain/allowed-payment-status";
 
 @Injectable()
 export class CreatePixPaymentUseCase {
@@ -19,7 +20,7 @@ export class CreatePixPaymentUseCase {
       description: input.description,
       amount: input.amount,
       paymentMethod: input.paymentMethod,
-      status: "PENDING",
+      status: AllowedPaymentStatus.PENDING,
     });
 
     return this.repository.create(payment);

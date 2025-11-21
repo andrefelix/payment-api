@@ -44,9 +44,13 @@ services:
       dockerfile: Dockerfile
     container_name: payment_api
     depends_on:
-      - postgres
-      - redis
-      - prisma-migrate
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      prisma-migrate:
+        condition: service_completed_successfully
+    command: ["sh", "-c", "npm run start"]
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/paymentdb?schema=public"
       REDIS_HOST: redis
@@ -68,9 +72,8 @@ services:
     depends_on:
       - postgres
       - redis
-      - api
       - prisma-migrate
-    command: ["npm", "run", "start:worker"]
+    command: ["sh", "-c", "npx prisma generate && npm run start:worker"]
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/paymentdb?schema=public"
       REDIS_HOST: redis

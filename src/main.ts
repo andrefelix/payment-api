@@ -2,34 +2,23 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import cors from "cors";
 import helmet from "helmet";
-import pino from "pino";
 import { AppModule } from "./app.module";
+import { LoggerService } from "./shared/infra/logger/logger.service";
+import { AllExceptionsFilter } from "./shared/infra/filters/all-exceptions.filter";
+import { LoggerInterceptor } from "./shared/infra/logger/logger.interceptor";
 
 async function bootstrap() {
-  const logger = pino({
-    transport: {
-      target: "pino-pretty",
-      options: {
-        colorize: true,
-      },
-    },
-  });
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
-    logger: false,
+    bufferLogs: true,
   });
-  app.useLogger({
-    log: (message, ...optionalParams) =>
-      logger.info(message, ...optionalParams),
-    error: (message, ...optionalParams) =>
-      logger.error(message, ...optionalParams),
-    warn: (message, ...optionalParams) =>
-      logger.warn(message, ...optionalParams),
-    debug: (message, ...optionalParams) =>
-      logger.debug(message, ...optionalParams),
-    verbose: (message, ...optionalParams) =>
-      logger.trace(message, ...optionalParams),
-  });
+
+  const logger = app.get(LoggerService);
+  app.useLogger(logger);
+
+  app.useGlobalFilters(new AllExceptionsFilter(logger));
+  app.useGlobalInterceptors(new LoggerInterceptor(logger));
+
   app.use(helmet());
   app.use(cors());
   app.useGlobalPipes(
@@ -39,8 +28,10 @@ async function bootstrap() {
       transform: true,
     })
   );
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
+
   logger.info(`Application is running on port ${port}`);
 }
 

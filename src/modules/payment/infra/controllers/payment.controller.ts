@@ -18,10 +18,7 @@ import { MercadoPagoService } from "../mercado-pago/mercadopago.service";
 import { CreatePaymentDto } from "../../application/dto/create-payment.dto";
 import { UpdatePaymentDto } from "../../application/dto/update-payment.dto";
 import { ListPaymentsDto } from "../../application/dto/list-payments.dto";
-import {
-  PaymentQueue,
-  PaymentCallbackJob,
-} from "../queue/payment.queue";
+import { PaymentQueue, PaymentCallbackJob } from "../queue/payment.queue";
 
 @Controller("payment")
 export class PaymentController {

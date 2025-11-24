@@ -7,8 +7,8 @@ export const PAYMENT_CALLBACK_QUEUE = "payment-callback";
 export type PaymentCallbackJob = {
   paymentId: string;
   status: string;
-  externalId?: string;
-  preferenceId?: string;
+  externalId: string;
+  preferenceId: string;
 };
 
 @Injectable()

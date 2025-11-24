@@ -37,6 +37,10 @@ export class CreateCreditCardPaymentUseCase {
       ],
     });
 
+    if (!preference || !preference.id || !preference.collector_id) {
+      throw new Error("Failed to create payment preference");
+    }
+
     const updated = Payment.create({
       id: created.id,
       cpf: created.cpf.value,
@@ -45,7 +49,7 @@ export class CreateCreditCardPaymentUseCase {
       paymentMethod: created.paymentMethod.value,
       status: created.status.value,
       preferenceId: preference.id,
-      externalId: preference.collector_id,
+      externalId: preference.collector_id.toString(),
       createdAt: created.createdAt,
       updatedAt: new Date(),
     });

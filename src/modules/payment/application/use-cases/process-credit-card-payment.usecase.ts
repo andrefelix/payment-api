@@ -8,9 +8,9 @@ import { AllowedPaymentMethods } from "../../domain/allowed-payment-methods";
 
 type ProcessCreditCardPaymentInput = {
   paymentId: string;
-  status?: string;
-  externalId?: string;
-  preferenceId?: string;
+  status: string;
+  externalId: string;
+  preferenceId: string;
 };
 
 export class ProcessCreditCardPaymentUseCase {
@@ -19,7 +19,7 @@ export class ProcessCreditCardPaymentUseCase {
   ) {}
 
   async execute(input: ProcessCreditCardPaymentInput): Promise<Payment> {
-    const payment = await this.repository.findByExternalId(input.paymentId);
+    const payment = await this.repository.findByExternalId(input.externalId);
 
     if (!payment) {
       throw new NotFoundException("Payment not found");

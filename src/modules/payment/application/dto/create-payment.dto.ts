@@ -12,8 +12,8 @@ import { AllowedPaymentMethods } from "../../domain/allowed-payment-methods";
 export class CreatePaymentDto {
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\d{11,14}$/, {
-    message: "cpf must contain 11 or 14 digits",
+  @Matches(/^\d{11}$/, {
+    message: "cpf must contain 11 number digits",
   })
   cpf!: string;
 
